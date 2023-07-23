@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-namespace taskmgr_BE
+namespace taskmgr_be
 {
     public static class WebApiConfig
     {
