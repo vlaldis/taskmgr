@@ -1,21 +1,33 @@
+import { useEffect, useState } from "react";
+import { listTasks } from "../../data/taskClient";
+import { Task, Tasks } from "../../interfaces";
 import { TaskRow } from "./TasksRow";
+import "./TasksTable.css";
 
 export const TasksTable = () => {
-    // TODO paging is not supported
-    const taskClient = new TaskClient();
-    const tasks = taskClient.listTasks();
-  
+    const [tasks, setTasks] = useState<Task[]>();
+
+    useEffect(() => {
+        async function getTasks() {
+            const tasklist = await listTasks();
+            if (tasklist)
+                setTasks(tasklist.tasks);
+        }
+        getTasks();
+    }, []);
+
     return (
-      <table>
-        <tr>
-          <th>Name</th>
-          <th>URL</th>
-          <th>Last executed</th>
-          <th>Result</th>
-          <th>Next run</th>
-          <th></th>
-        </tr>
-        {tasks.map((task, itr) => TaskRow({ task, key: itr }))}
-      </table>
+        // TODO paging is not supported
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>URL</th>
+                <th>Last executed</th>
+                <th>Result</th>
+                <th>Next run</th>
+                <th></th>
+            </tr>
+            {tasks && tasks.map((task, itr) => TaskRow({ task, key: itr }))}
+        </table>
     );
-  }
+}
