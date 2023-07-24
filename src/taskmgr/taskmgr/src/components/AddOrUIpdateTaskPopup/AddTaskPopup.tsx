@@ -3,7 +3,8 @@ import { TaskRequest } from '../../interfaces';
 import { Popup } from '../Popup/Popup';
 import "./AddTaskPopup.css";
 
-interface AddOrUpdateTaskPopupProps { closed: boolean, action: (request: TaskRequest) => Promise<void> };
+// task for update scenario goes here
+interface AddOrUpdateTaskPopupProps { closed: boolean, action: (request: TaskRequest) => Promise<void> }; 
 
 const DEFAULT_INTERVAL = 10 // minutes
 
