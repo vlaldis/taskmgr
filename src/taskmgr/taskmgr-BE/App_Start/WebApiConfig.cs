@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using System.Web.Http.Cors;
 using taskmgr_be.Filters;
 
 namespace taskmgr_be
@@ -8,7 +9,8 @@ namespace taskmgr_be
         public static void Register(HttpConfiguration config)
         {
             GlobalConfiguration.Configuration.Filters.Add(new GlobalExceptionFilter());
-
+            var corsAttr = new EnableCorsAttribute("http://localhost:3000", "*", "*");
+            config.EnableCors(corsAttr);
             // Web API configuration and services
             config.Routes.MapHttpRoute(
                 name: "swagger",

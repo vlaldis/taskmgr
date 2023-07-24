@@ -19,6 +19,7 @@ export const TasksTable = () => {
     return (
         // TODO paging is not supported
         <table>
+        <thead>
             <tr>
                 <th>Name</th>
                 <th>URL</th>
@@ -26,8 +27,11 @@ export const TasksTable = () => {
                 <th>Result</th>
                 <th>Next run</th>
                 <th></th>
-            </tr>
-            {tasks && tasks.map((task, itr) => TaskRow({ task, key: itr }))}
+                </tr>
+            </thead>
+            <tbody>
+                {tasks && tasks.map((task, itr) => TaskRow({ task, key: itr }))}
+            </tbody>
         </table>
     );
 }

@@ -15,7 +15,7 @@ namespace taskmgr_be.Data
         {
         }
 
-        public System.Data.Entity.DbSet<taskmgr_be.Models.SchedulerTask> Tasks { get; set; }
+        public System.Data.Entity.DbSet<taskmgr_be.Models.SchedulerTask> SchedullerTask { get; set; }
         public System.Data.Entity.DbSet<taskmgr_be.Models.History> History { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

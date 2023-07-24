@@ -23,7 +23,8 @@ export const listTasks: () => Promise<void | Tasks> = async () =>
             return response.json()
         })
         // this should not be seen by user, we can log and then redirect to errorpage or so
-        .catch((error) => alert("Can not load tasks: " + error.text));
+        .catch((error) =>
+            alert("Can not load tasks: " + error.text));
 
 
 export const startTask: (taskId: string) => Promise<void> = async (taskId: string) =>

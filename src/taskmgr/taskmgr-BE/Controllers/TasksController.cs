@@ -20,14 +20,14 @@ namespace taskmgr_be.Controllers
         // GET: api/Tasks
         public IQueryable<SchedulerTask> GetTasks()
         {
-            return db.Tasks;
+            return db.SchedullerTask;
         }
 
         // GET: api/Tasks/<guid>
         [ResponseType(typeof(SchedulerTask))]
         public async Task<IHttpActionResult> GetTask(Guid id)
         {
-            var task = await db.Tasks.FindAsync(id);
+            var task = await db.SchedullerTask.FindAsync(id);
             if (task == null)
             {
                 return NotFound();
@@ -76,7 +76,7 @@ namespace taskmgr_be.Controllers
         [Route("{id}/start")]
         public async Task<IHttpActionResult> PostTaskStart(Guid id)
         {
-            var task = await db.Tasks.FindAsync(id);
+            var task = await db.SchedullerTask.FindAsync(id);
             if (task == null)
             {
                 return NotFound();
@@ -113,7 +113,7 @@ namespace taskmgr_be.Controllers
                 return BadRequest(ModelState);
             }
 
-            db.Tasks.Add(task);
+            db.SchedullerTask.Add(task);
 
             try
             {
@@ -145,7 +145,7 @@ namespace taskmgr_be.Controllers
 
         private async Task<bool> TaskExistsAsync(Guid id)
         {
-            return await db.Tasks.CountAsync(e => e.TaskId == id) > 0;
+            return await db.SchedullerTask.CountAsync(e => e.TaskId == id) > 0;
         }
     }
 }
