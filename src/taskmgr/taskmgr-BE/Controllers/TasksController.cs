@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using taskmgr_be.Data;
@@ -20,16 +18,16 @@ namespace taskmgr_be.Controllers
 
         // [Authorize]
         // GET: api/Tasks
-        public IQueryable<Task> GetTasks()
+        public IQueryable<SchedulerTask> GetTasks()
         {
             return db.Tasks;
         }
 
-        // GET: api/Tasks/5
-        [ResponseType(typeof(Task))]
-        public IHttpActionResult GetTask(string id)
+        // GET: api/Tasks/<guid>
+        [ResponseType(typeof(SchedulerTask))]
+        public async Task<IHttpActionResult> GetTask(Guid id)
         {
-            Task task = db.Tasks.Find(id);
+            var task = await db.Tasks.FindAsync(id);
             if (task == null)
             {
                 return NotFound();
@@ -38,16 +36,16 @@ namespace taskmgr_be.Controllers
             return Ok(task);
         }
 
-        // PUT: api/Tasks/5
+        // PUT: api/Tasks/<guid>
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutTask(string id, Task task)
+        public async Task<IHttpActionResult> PutTask(Guid id, SchedulerTask task)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != task.Id)
+            if (id != task.TaskId)
             {
                 return BadRequest();
             }
@@ -60,7 +58,7 @@ namespace taskmgr_be.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TaskExists(id))
+                if (!await TaskExistsAsync(id))
                 {
                     return NotFound();
                 }
@@ -73,9 +71,42 @@ namespace taskmgr_be.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        // POST: api/Tasks/<guid>/start
+        [ResponseType(typeof(SchedulerTask))]
+        [Route("{id}/start")]
+        public async Task<IHttpActionResult> PostTaskStart(Guid id)
+        {
+            var task = await db.Tasks.FindAsync(id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            var executionResult = await SimpleHttpClient.StartTask(task.Url);
+            var history = new History()
+            {
+                Description = executionResult.Result,
+                RunDate = DateTime.UtcNow,
+                State = executionResult.State,
+                TaskId = task.TaskId
+            };
+            db.History.Add(history);
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateException)
+            {
+                //logg or whatever
+                throw;
+            }
+            return Ok();
+        }
+
         // POST: api/Tasks
-        [ResponseType(typeof(Task))]
-        public IHttpActionResult PostTask(Task task)
+        [ResponseType(typeof(SchedulerTask))]
+        public async Task<IHttpActionResult> PostTask(SchedulerTask task)
         {
             if (!ModelState.IsValid)
             {
@@ -90,7 +121,7 @@ namespace taskmgr_be.Controllers
             }
             catch (DbUpdateException)
             {
-                if (TaskExists(task.Id))
+                if (await TaskExistsAsync(task.TaskId))
                 {
                     return Conflict();
                 }
@@ -100,7 +131,7 @@ namespace taskmgr_be.Controllers
                 }
             }
 
-            return CreatedAtRoute("DefaultApi", new { id = task.Id }, task);
+            return CreatedAtRoute("DefaultApi", new { id = task.TaskId }, task);
         }
 
         protected override void Dispose(bool disposing)
@@ -112,9 +143,9 @@ namespace taskmgr_be.Controllers
             base.Dispose(disposing);
         }
 
-        private bool TaskExists(string id)
+        private async Task<bool> TaskExistsAsync(Guid id)
         {
-            return db.Tasks.Count(e => e.Id == id) > 0;
+            return await db.Tasks.CountAsync(e => e.TaskId == id) > 0;
         }
     }
 }

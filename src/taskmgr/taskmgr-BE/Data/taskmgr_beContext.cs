@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
+﻿using System.Data.Entity;
 
 namespace taskmgr_be.Data
 {
@@ -19,6 +15,13 @@ namespace taskmgr_be.Data
         {
         }
 
-        public System.Data.Entity.DbSet<taskmgr_be.Models.Task> Tasks { get; set; }
+        public System.Data.Entity.DbSet<taskmgr_be.Models.SchedulerTask> Tasks { get; set; }
+        public System.Data.Entity.DbSet<taskmgr_be.Models.History> History { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            Database.SetInitializer<taskmgr_beContext>(null);
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
+﻿using System.Web.Http;
+using taskmgr_be.Filters;
 
 namespace taskmgr_be
 {
@@ -9,8 +7,15 @@ namespace taskmgr_be
     {
         public static void Register(HttpConfiguration config)
         {
-            // Web API configuration and services
+            GlobalConfiguration.Configuration.Filters.Add(new GlobalExceptionFilter());
 
+            // Web API configuration and services
+            config.Routes.MapHttpRoute(
+                name: "swagger",
+                routeTemplate: "",
+                defaults: null,
+                constraints: null,
+                handler: new Swashbuckle.Application.RedirectHandler((message => message.RequestUri.ToString()), "swagger"));
             // Web API routes
             config.MapHttpAttributeRoutes();
 

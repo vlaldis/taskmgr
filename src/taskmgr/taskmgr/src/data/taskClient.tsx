@@ -2,14 +2,12 @@ import { Task, TaskRequest, Tasks } from "../interfaces";
 
 //this can be json or from environment, lets not waste time and keep it there
 const config = {
-    allTasks: "http://localhost:1234/api/task/all",
-    addTask: "http://localhost:1234/api/task",
-    startTask: "http://localhost:1234/api/task/start/"
+    tasks: "http://localhost:12345/api/tasks"
 }
 
 // lets not care about authentication for simplicity, but it shold be there
 export const listTasks: () => Promise<void | Tasks> = async () =>
-    fetch(config.allTasks, {
+    fetch(config.tasks, {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -29,7 +27,7 @@ export const listTasks: () => Promise<void | Tasks> = async () =>
 
 
 export const startTask: (taskId: string) => Promise<void> = async (taskId: string) =>
-    fetch(config.startTask + taskId, {
+    fetch(`${config.tasks}/${taskId}/start` , {
         method: "POST",
         credentials: "omit",
     })
@@ -42,7 +40,7 @@ export const startTask: (taskId: string) => Promise<void> = async (taskId: strin
         .catch((error) => alert("Can not start task: " + error.text));
 
 export const addTask: (task: TaskRequest) => Promise<void> = async (task: TaskRequest) =>
-    fetch(config.addTask, {
+    fetch(config.tasks, {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
